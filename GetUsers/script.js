@@ -92,8 +92,9 @@ async function getSetUsers() {
                 const roles = asset.site.roleAssignments;
                 for (const role of roles) {
                     if (role.groups !== undefined) continue;
-
+                    
                     if (role.users !== undefined) {
+                        console.log(asset)
                         const nameArr = role.users.split(",");
                         for (const item of nameArr) {
                             set.add(item);
