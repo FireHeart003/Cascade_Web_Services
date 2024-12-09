@@ -8,11 +8,12 @@ const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
 const APIKey = config.API_KEY;
 
-async function getSites() {
+async function getFolder() { // Gets Folder ID and goes through the files, checking for relationships. If no relationships are found, the file is deleted 
     let htmlText = '';
     folderId = document.getElementById("userInput").value;
     console.log(folderId)
     try {
+        // Fetch all the files inside a folder given the folder ID
         const response = await fetch(cascadeEP + "/api/v1/read/folder/" + folderId, {
             headers: {
                 Authorization: "Bearer " + APIKey,
@@ -27,11 +28,16 @@ async function getSites() {
             throw new Error(`HTTP error: ${response.status}`);
         }
 
+        // Convert result to json
         const json = await response.json();
-        // console.log(json)
+
+        // For loop going through contents of the folder
         for(const asset of json.asset.folder.children){
-            if(asset.type === "file"){
+            //If the content type is a file, check to see if there are any relationships
+            if(asset.type === "file"){ 
                 const subs = await checkRelationships(asset.id);
+                
+                // if there are no relatinoships, we call deleteAsset(asset.id) to delete that file
                 if(subs.length === 0){
                     console.log(subs)
                     console.log(asset)
@@ -41,7 +47,7 @@ async function getSites() {
                 }
             }
         }
-        if(htmlText === ""){
+        if(htmlText === ""){ // Debugging to check if the folder is empty
             console.log("empty")
         }
         document.getElementById("output").innerHTML += htmlText;
@@ -50,7 +56,8 @@ async function getSites() {
     }
 }
 
-async function deleteAsset(fileId) {
+// Deletes the asset by calling the Cascade API
+async function deleteAsset(fileId) { 
     try {
         const del = await fetch(cascadeEP + "/api/v1/delete/file/" + fileId, {
             headers: {
@@ -67,7 +74,8 @@ async function deleteAsset(fileId) {
     }
 }
 
-async function checkRelationships(fileId) {
+// Checks for any relationships and return the array of relationships for the file
+async function checkRelationships(fileId) { 
     try {
         const response = await fetch(cascadeEP + "/api/v1/listSubscribers/file/" + fileId, {
             headers: {
@@ -90,7 +98,7 @@ async function checkRelationships(fileId) {
     }
 }
 
-
+// Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type,id) {
     var assetType = type;
     var assetID = id;
@@ -116,6 +124,7 @@ async function readAsset(type,id) {
     }
 }
 
+// Creates an asset in Cascade
 async function createAsset(asset) {
     try {
         var response = await fetch( createEP, {
@@ -139,6 +148,7 @@ async function createAsset(asset) {
     }
 }
 
+// Edits an asset in Cascade with the given parameters for the update
 async function editAsset(type, id, asset) {
 
     try {

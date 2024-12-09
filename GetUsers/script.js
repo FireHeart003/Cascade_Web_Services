@@ -125,6 +125,32 @@ function finished(set) { // Given a set, output each user with their email and o
     console.log(htmlText);
 }
 
+
+// Reads an asset given an id and type and returns a JSON object of the asset
+async function readAsset(type,id) {
+    var assetType = type;
+    var assetID = id;
+    try {
+        console.log("trying to read "+ id);
+        var response = await fetch( readEP + "/"+assetType+"/" + assetID, {
+            "headers": {
+                "Authorization": "Bearer "+ APIKey,
+                "Access-Control-Allow-Origin": "*"
+            },
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "method": "GET",
+            "mode": "cors"
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        var json = await response.json();
+        return json.asset;
+
+    } catch(error) {
+        console.error(`: ${error}`);
+    }
+}
 /*
 async function processItems(items) {
   for (const item of items) {
@@ -150,53 +176,3 @@ async function callApi(item) {
 const items = ['item1', 'item2', 'item3'];
 processItems(items).then(() => console.log('All items processed!'));
 */
-async function readAsset(type,id) {
-    var assetType = type;
-    var assetID = id;
-    try {
-        console.log("trying to read "+ id);
-        var response = await fetch( readEP + "/"+assetType+"/" + assetID, {
-            "headers": {
-                "Authorization": "Bearer "+ APIKey,
-                "Access-Control-Allow-Origin": "*"
-            },
-            "referrerPolicy": "strict-origin-when-cross-origin",
-            "method": "GET",
-            "mode": "cors"
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
-        var json = await response.json();
-        return json.asset;
-
-    } catch(error) {
-        console.error(`: ${error}`);
-    }
-}
-
-async function editAsset(type, id, asset) {
-
-    try {
-
-        let response = await fetch( editEP + "" + "/"+ type +"/" + id, 
-            { 
-                method: 'POST',
-                headers: {"Authorization": "Bearer "+ APIKey},
-                body: JSON.stringify({'asset': asset})
-            }
-        );
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        } 
-
-        var json = await response.json();
-        return json;
-    
-
-    } catch(error) {
-        console.error(`: ${error}`);
-        return {"success":false};
-    }
-}
