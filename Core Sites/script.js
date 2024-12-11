@@ -29,7 +29,7 @@ async function getSites() { // Outputs all Core Sites to the page
             let siteOptions = readAsset("block",site.path.path + "/site-info");  // Read the site info block
             console.log(site);
             siteOptions.then((asset) => {
-                if(typeof asset !== 'undefined'){ //If the asset exists
+                if(typeof asset !== 'undefined'){ // Checks if the asset exists
                     let name = asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[0].text; // Gets the name of the asset for the output
                     console.log(asset);
                     if(asset.xhtmlDataDefinitionBlock.structuredData.definitionPath === "CDN:core/site-info"){ //Checks if the definitionPath of asset is a core site

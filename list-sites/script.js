@@ -27,23 +27,25 @@ async function getSites() {
         
         //loop through the data in the json variable and output the name of the site 
         json.sites.forEach(site => {
-            let siteOptions = readAsset("block",site.path.path + "/site-info");
+            let siteOptions = readAsset("block",site.path.path + "/site-info"); // Read the site info block
             siteOptions.then((asset) => {
-                if(typeof asset !== 'undefined'){
-                    let name = asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[0].text;
-                    let blockId = asset.xhtmlDataDefinitionBlock.id;
+                if(typeof asset !== 'undefined'){ // Checks if the asset exists
+                    let name = asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[0].text; // Gets the name of the asset for the output
+                    let blockId = asset.xhtmlDataDefinitionBlock.id; // Gets the id of the block for the output
                     let check;
-                    console.log(asset);
-                    if(asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[3].identifier === "fiu-brand-text"){
-                        check = asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[3].text;
-                        if(name.startsWith("FIU")){
-                            displaySite(check, blockId, name, "output");            
+                    if(blockId == "c55ad89d0a73710b1e08b2e64d00221a"){
+                        console.log(asset);
+                    }
+                    if(asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[3].identifier === "fiu-brand-text"){ // Checks if "Add 'FIU' brand text to meta title" is an option avaialble
+                        check = asset.xhtmlDataDefinitionBlock.structuredData.structuredDataNodes[0].structuredDataNodes[3].text; // Gets the value that determines if the "Add 'FIU' brand text to meta title" is selected or not
+                        if(name.startsWith("FIU")){ // Checks if website name starts with FIU
+                            displaySite(check, blockId, name, "output");  // Displays the site if "Add 'FIU' brand text to meta title" is selected or not
                         }
-                        else if(name.includes("FIU")){
-                            displaySite(check, blockId, name, "output2");     
+                        else if(name.includes("FIU")){ // Checks if website name includes FIU
+                            displaySite(check, blockId, name, "output2"); // Displays the site if "Add 'FIU' brand text to meta title" is selected or not 
                         }
-                        else if(name.includes("Florida International University")){
-                            displaySite(check, blockId, name, "output3");    
+                        else if(name.includes("Florida International University")){ // Checks if website name includes Florida International University
+                            displaySite(check, blockId, name, "output3"); // Displays the site if "Add 'FIU' brand text to meta title" is selected or not
                         }
                     }
                 }
@@ -54,16 +56,17 @@ async function getSites() {
     }
 }
 
+// Displays the site if "Add 'FIU' brand text to meta title" is selected or not
 function displaySite(check, blockId, name, output){
-    if(check == "::CONTENT-XML-CHECKBOX::"){
+    if(check == "::CONTENT-XML-CHECKBOX::"){ // Checks if checkbox is NOT selected and outputs the name of the website as a link to site-info block of site
         document.getElementById(output).innerHTML += `<a href="https://cascade.fiu.edu/entity/open.act?type=block&id=${blockId}" target="_blank" rel="noopener noreferrer">${name}</a><br>`;
     }
-    else{
+    else{ // Checkbox IS selected and outputs the name of the website as a link to site-info block of site with a checkmark 
         document.getElementById(output).innerHTML += `<a href="https://cascade.fiu.edu/entity/open.act?type=block&id=${blockId}" target="_blank" rel="noopener noreferrer">${name}</a><span>&#10003;</span><br>`;
     }
 }
- 
-async function step2(){
+// Function that outputs sites that have FIU or Florida International University in the site name
+async function checkFiuNames(){
     document.getElementById("output").textContent = "";
     try {
         var response = await fetch( cascadeEP + "/api/v1/listSites" , {
@@ -107,6 +110,7 @@ async function step2(){
     }
 }
 
+// Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type,id) {
     var assetType = type;
     var assetID = id;
@@ -132,6 +136,7 @@ async function readAsset(type,id) {
     }
 }
 
+// Creates asset on Cascade given parameters for the asset
 async function createAsset(asset) {
     try {
         var response = await fetch( createEP, {
@@ -155,6 +160,7 @@ async function createAsset(asset) {
     }
 }
 
+// Edits an asset in Cascade with the given parameters for the update
 async function editAsset(type, id, asset) {
 
     try {
