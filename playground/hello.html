@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabs Example</title>
+
+  <!-- Foundation CSS -->
+  <link rel="stylesheet" href="css/foundation.min.css">
+  <link rel="stylesheet" href="css/normalize.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/foundation-icons/foundation-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+  <ul class="tabs" data-tab>
+    <li class="tab-title active"><a href="#panel1">Tab 1</a></li>
+    <li class="tab-title"><a href="#panel2">Tab 2</a></li>
+    <li class="tab-title"><a href="#panel3">Tab 3</a></li>
+    <li class="tab-title"><a href="#panel4">Tab 4</a></li>
+  </ul>
+
+  <div class="tabs-content">
+    <div class="content active" id="panel1">
+      <p>This is the first panel of the basic tab example. You can place all sorts of content here including a grid.</p>
+    </div>
+    <div class="content" id="panel2">
+      <p>This is the second panel of the basic tab example. This is the second panel of the basic tab example.</p>
+    </div>
+    <div class="content" id="panel3">
+      <p>This is the third panel of the basic tab example. This is the third panel of the basic tab example.</p>
+    </div>
+    <div class="content" id="panel4">
+      <p>This is the fourth panel of the basic tab example. This is the fourth panel of the basic tab example.</p>
+    </div>
+  </div>
+
+  <!-- Foundation JS -->
+  <script src = "js/jquery.min.js"></script>
+      <script src="js/foundation.min.js"></script>
+  
+  <!-- Initialize Foundation JS -->
+  <script>
+    $(document).foundation();
+  </script>
+
+</body>
+</html>
