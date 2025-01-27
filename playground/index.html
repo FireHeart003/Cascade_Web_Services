@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/foundation-icons/foundation-icons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.1.2/jsoneditor.min.css" type="text/css">
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.1.2/jsoneditor.min.js"></script>
+
 </head>
 
 <body>
@@ -29,30 +32,31 @@
   </div>
 
   <div class = "row">
-    <ul id="root">
-    </ul>
+    <div class = "large-4 columns">
+      <ul id="root">
+      </ul>
+    </div>
+    <div class = "large-8 columns">
+      <div class="dataOutput">
+        <div class="output">
+          <label id = "output-format" >Select Output Format
+            <select id="data-output">
+              <option value = "Json">JSON</option>
+              <option value = "XML">XML</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <div id = "results"></div>
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- <div class="tabs-content">
-    <div class="content" id="panel11">
-
-    </div>
-    <div class="content" id="panel12">
-      <li class="tab-title"><a href="#panel12"><i class="fa-solid fa-folder"></i> test2</a></li>
-    </div>
-    <div class="content" id="panel13">
-      <li class="tab-title"><a href="#panel13"><i class="fa-solid fa-folder"></i> test3</a></li>
-    </div>
-    <div class="content" id="panel14">
-      <li class="tab-title"><i class="fa-solid fa-folder"></i> test4</li>
-    </div>
-    <div class="content" id="panel15">
-      <li class="tab-title"><a href="#panel15"><i class="fa-solid fa-folder"></i> test5</a></li>
-    </div>
-  </div> -->
-  <script src="../config.js"></script>
+  <script src="config.js"></script>
   <script src="js/jquery.min.js"></script>
   <script src="js/foundation.min.js"></script>
   <script src="js/app.js"></script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/x2js/1.2.0/xml2json.min.js"></script>
   <script>
     $(document).foundation();
   </script>

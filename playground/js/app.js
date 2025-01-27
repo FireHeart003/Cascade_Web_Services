@@ -5,6 +5,7 @@ const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
 const APIKey = config.API_KEY;
 
+// Gets all the site names that can be selected by user
 async function getSites() {
     let htmlText = `<option value="Select a Site">Select a Site</option>`;
     try {
@@ -36,13 +37,23 @@ async function getSites() {
     }
 }
 
+/* 
+Helper function to:
+- get site info
+- use the info to get folder Id
+- get the info inside the folder
+- add the listeners to each file/folder in current directory
+*/
 async function siteNameUpdater(){
     var siteId = this.value;
     folderId = await getSiteData(siteId);
-    console.log(folderId)
-    getRootFolder(folderId)
+    console.log(folderId);
+    let text = await getRootFolder(folderId);
+    document.getElementById("root").innerHTML = text;
+    addListeners();
 }
 
+// Fetches site info
 async function getSiteData(siteId){
     try {
         // Fetch all the files inside a folder given the folder ID
@@ -69,9 +80,10 @@ async function getSiteData(siteId){
     }
 }
 
+
+// Returns html for current directory
 async function getRootFolder(folderId){
-    let text = 'Directory'
-    let jsonText = ''
+    let text = ''
     try {
         // Fetch all the files inside a folder given the folder ID
         const response = await fetch(cascadeEP + "/api/v1/read/folder/" + folderId, {
@@ -92,33 +104,34 @@ async function getRootFolder(folderId){
         const json = await response.json();
         jsonText = JSON.stringify(json, undefined, 4);
 
-        console.log(json.asset.folder.children.length);
+        // console.log(json.asset.folder.children.length);
         for(const asset of json.asset.folder.children){
             if(asset.type === "folder"){
-                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = "folder"><i class = "fa-solid fa-folder"></i> ${asset.path.path}</a></li>`;
+                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = ${asset.type}><i class = "fa-solid fa-folder"></i> ${asset.path.path}</a></li>`;
+                text += `<ul id = "${asset.id}Content" class="hidden"></ul>`
             }
             else if(asset.type === "template"){
-                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = "template"><i class = "fa-solid fa-table-cells-large"></i> ${asset.path.path}</a></li>`;
+                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = ${asset.type}><i class = "fa-solid fa-table-cells-large"></i> ${asset.path.path}</a></li>`;
             }
             else if(asset.type === "format_XSLT"){
-                text += `<li class="tab-title"><a href="#" id = ${asset.id} data-type = "format_XSLT"><i class = "fa-solid fa-code"></i> ${asset.path.path}</a></li>`;
+                text += `<li class="tab-title"><a href="#" id = ${asset.id} data-type = ${asset.type}><i class = "fa-solid fa-code"></i> ${asset.path.path}</a></li>`;
             }
             else if(asset.type.includes("block")){
-                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = "block"><i class = "fa-solid fa-cube"></i> ${asset.path.path}</a></li>`;
+                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = ${asset.type}><i class = "fa-solid fa-cube"></i> ${asset.path.path}</a></li>`;
             }
             else{
-                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = "file"><i class = "fa-solid fa-file"></i> ${asset.path.path}</a></li>`;
+                text += `<li class="tab-title"><a href="#" data-id = ${asset.id} data-type = ${asset.type}><i class = "fa-solid fa-file"></i> ${asset.path.path}</a></li>`;
             }
         }
-        document.getElementById("root").innerHTML = text;
-        console.log(jsonText)
-        addListeners();
-        // document.getElementById("currDir").textContent = jsonText;
+
+        console.log(jsonText);
+        return text;
     } catch (error) {
         console.error(`Error: ${error}`);
     }
 }
 
+// Adding the click listener for when user clicks on a file or folder
 function addListeners(){
     var elements = document.getElementsByClassName('tab-title');
     for(var i = 0; i< elements.length; i++){
@@ -126,12 +139,53 @@ function addListeners(){
     }
 }
 
+// Gets sub folders and files within a folder OR shows the JSON object for other file formats
 async function updater(event){
     console.log(event.target);
     console.log(event.target.dataset.type)
     type = event.target.dataset.type;
-    // if(type === )
+    const bar = document.getElementById('output-format');
+    bar.style.display='Block';
+    bar.addEventListener('change', formatChange);
+    if(type === "folder"){
+        let dirFolder = await getRootFolder(event.target.dataset.id);
+        const folderContents = document.getElementById(event.target.dataset.id + "Content");
+        if(folderContents){
+            if(folderContents.classList.contains("hidden")){
+                folderContents.classList.remove("hidden");
+                folderContents.innerHTML = dirFolder;
+            }
+            else{
+                folderContents.classList.add("hidden");
+            }
+        }
+        addListeners();
+    }
+    else{
+        const container = document.getElementById("results");
+        container.innerHTML = "";
+        const options = {};
+        const editor = new JSONEditor(container, options)
+        json = await readAsset(type, event.target.dataset.id)
+        editor.set(json)
+    }
 }
+
+async function formatChange(){
+    let type = this.data;
+    if(type === "XML"){
+
+    }
+    else{
+        const container = document.getElementById("results");
+        container.innerHTML = "";
+        const options = {};
+        const editor = new JSONEditor(container, options)
+        json = await readAsset(type, event.target.dataset.id)
+        editor.set(json)
+    }
+}
+
 // Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type,id) {
     var assetType = type;
