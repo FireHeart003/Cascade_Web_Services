@@ -4,6 +4,9 @@ const editEP =  cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
 const APIKey = config.API_KEY;
+// var currentID = "";
+// var outputFormat = "Json";
+// var currentType = "";
 
 // Gets all the site names that can be selected by user
 async function getSites() {
@@ -83,6 +86,8 @@ async function getSiteData(siteId){
 
 // Returns html for current directory
 async function getRootFolder(folderId){
+    currentID = folderId;
+    currentType = "Folder"
     let text = ''
     try {
         // Fetch all the files inside a folder given the folder ID
@@ -162,18 +167,29 @@ async function updater(event){
         addListeners();
     }
     else{
-        const container = document.getElementById("results");
-        container.innerHTML = "";
-        const options = {};
-        const editor = new JSONEditor(container, options)
-        json = await readAsset(type, event.target.dataset.id)
-        editor.set(json)
+        formatChange(event)
     }
+    // currentID = event.target.dataset.id;
+    // currentType = type;
 }
 
-async function formatChange(){
-    let type = this.data;
-    if(type === "XML"){
+async function formatChange(event){
+    outputFormat = event.target.value;
+    event.stopPropagation();
+    if(outputFormat=== "Relationships"){
+        // try{
+        //     const container = document.getElementById("results");
+        //     container.innerHTML = "";
+        //     let rels = await checkRelationships(type, currentID);
+        //     const options = {};
+        //     const editor = new JSONEditor(container, options)
+        //     console.log(currentID);
+        //     console.log(type);
+        //     editor.set(rels);
+        // }
+        // catch{
+        //     console.log("ERROR")
+        // }
 
     }
     else{
@@ -183,6 +199,32 @@ async function formatChange(){
         const editor = new JSONEditor(container, options)
         json = await readAsset(type, event.target.dataset.id)
         editor.set(json)
+    }
+    // currentID = event.target.dataset.id;
+    // currentType = type;
+}
+
+// Checks for any relationships and return the array of relationships for the file
+async function checkRelationships(type, fileId) { 
+    try {
+        const response = await fetch(cascadeEP + "/api/v1/listSubscribers/" + type+ "/" + fileId, {
+            headers: {
+                Authorization: "Bearer " + APIKey,
+                "Access-Control-Allow-Origin": "*"
+            },
+            referrerPolicy: "strict-origin-when-cross-origin",
+            method: "GET",
+            mode: "cors"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const json = await response.json();
+        return json.subscribers;
+    } catch (error) {
+        console.error(`Error: ${error}`);
     }
 }
 
