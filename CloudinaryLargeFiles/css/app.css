@@ -1,0 +1,24 @@
+.root {
+    font-family: 'Arial';
+}
+
+li{
+    /* list-style: none; */
+}
+
+#output-format{
+    display:none;
+}
+
+.output{
+    margin-bottom: 10px;
+}
+
+.hidden{
+    display: none;
+}
+
+ul{
+    padding: 0;
+    margin-bottom: 0;
+}
