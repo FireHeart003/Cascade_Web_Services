@@ -9,31 +9,28 @@ if we are on the homepage
 
  
 const url = 'https://cnhs.fiu.edu/';
-const section = document.querySelector('[aria-label="Home Page Content"]');
-if (!section) {
-  const announcement = document.querySelector('.fiu-announcement');
-  if (!announcement) {
-    const storedBanner = sessionStorage.getItem("announcement");
-    if (storedBanner) {
-      insertBanner(storedBanner);
-    } else {
-      fetch(url)
-        .then(response => response.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const div = doc.querySelector('.fiu-announcement');
-          if (div) {
-            insertBanner(div.outerHTML);
-            sessionStorage.setItem("announcement", div.outerHTML);
-          }
-        })
-        .catch(err => {
-          console.log('Error:', err);
-        });
+const announcement = document.querySelector('.fiu-announcement');
+if (!announcement) {
+  const storedBanner = sessionStorage.getItem("announcement");
+  if (storedBanner) {
+    insertBanner(storedBanner);
+  } else {
+    fetch(url)
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const div = doc.querySelector('.fiu-announcement');
+        if (div) {
+          insertBanner(div.outerHTML);
+          sessionStorage.setItem("announcement", div.outerHTML);
+        }
+      })
+      .catch(err => {
+        console.log('Error:', err);
+      }); 
     }
   }
-}
 function insertBanner(banner) {
   const div = document.getElementById("main-content");
   if (div) {
