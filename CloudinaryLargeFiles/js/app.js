@@ -1,12 +1,23 @@
-$(document).foundation();
 const cascadeEP = "https://cascade.fiu.edu"
 const editEP =  cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
 const APIKey = config.API_KEY;
-let folders = [];
-let images = [];
-//https://cascade.fiu.edu/entity/open.act?id=${id}&type=file
+
+$(document).foundation();
+
+let table = new DataTable('#myTable',{
+    "createdRow": function(row, data){
+        console.log(data[3])
+        if (data[1] >= 1000) {
+            row.classList.add('yellow');
+        }
+        if(data[3] == "<ul>None</ul>"){
+            row.classList.remove('yellow')
+            row.classList.add('red');
+        }
+    }
+});
 
 // Gets all the site names that can be selected by user
 async function getSites() {
@@ -40,22 +51,11 @@ async function getSites() {
 }
 
 async function loopFolder(){
-    images = [];
+    table.clear().draw();
+    document.getElementById("status").innerText = "Loading...";
     contents = await readAsset("site", this.value);
-    console.log(contents.site.rootFolderId)
     await realRecurrsion(contents.site.rootFolderId);
-    // await display();
-    console.log(images);
-    document.getElementById("root").innerHTML += "FINISHED";
-}
-
-async function display(){
-    div = document.getElementById("root");
-    let html = '';
-    for(const image of images){
-        html += image;
-    }
-    div.innerHTML = html;
+    document.getElementById("status").innerText = "Finished!";
 }
 
 async function realRecurrsion(folderId){
@@ -68,54 +68,43 @@ async function realRecurrsion(folderId){
             let file = await readAsset(asset.type, asset.id);
             let ext = file.file.name.slice(-4);
             const img = file.file;
-            console.log(file);
             if(ext === ".bmp" || ext === ".jpeg" || ext === ".jpg" || ext === ".png" || ext === ".webp"){
-                div = document.getElementById("root");
-                let html = "";
+                console.log(file);
+                div = document.getElementById("tableRow");
+                let rowData = [];
 
                 //File name with Link
                 let create = img.createdBy;
                 let path = img.path;
-                html += `
-                    <li><a href = "https://cascade.fiu.edu/entity/open.act?id=${img.id}&type=file" target = "_blank">${img.name}</a>
-                        <br></li><ul><li>Image Path: ${path}</li>`;
-
+                rowData.push(`<a href = "https://cascade.fiu.edu/entity/open.act?id=${img.id}&type=file" target = "_blank">${img.name}</a>`);
+                
                 //File size
                 let imgSize = (img.data.length / 1024).toFixed(0);
-                html += `<li>Size: ${imgSize}kb</li>`;
+                rowData.push(`${imgSize}`)
 
                 //Who uploaded? Article referencing image and the article's path
                 let relationships = await checkRelationships("file", img.id);
-                html += `<li>Created by: ${create}</li>
-                            <li>Articles Referencing Image:<ul> `
+                rowData.push(create)
+                let text = '';
+                text +=('<ul>')
                 let subs = relationships.subscribers;
                 if(subs.length === 0){
-                    html += `<li>None</li>`
+                    text += "None"
                 }
                 else{
                     for(const sub of subs){
-                        html += `<li><a href = "https://cascade.fiu.edu/entity/open.act?id=${sub.id}&type=page" target = "_blank">Article Path: ${sub.path.path}</a></li>`
+                        text += (`<li><a href = "https://cascade.fiu.edu/entity/open.act?id=${sub.id}&type=page" target = "_blank">Article Path: ${sub.path.path}</a></li>`);
                     }
                 }
+                text += "</ul>"
+                rowData.push(text)
 
-                div.innerHTML += html + `</ul></ul>`;
-
-                // images.push([img.name,`https://cascade.fiu.edu/entity/open.act?id=${img.id}&type=file`, `Created by: ${img.createdBy}`])
+                table.rows.add([rowData]).draw();
             }
         }
     }
 }
-{/* <ul>
-    <li>Image Name</li>
-    <ul>
-        <li>Who Uploaded</li>
-        <li>Subscriber list</li>
-        <ul>
-            <li>Sub1</li>
-            <li>Sub2</li>
-        </ul>
-    </ul>
-</ul> */}
+
 
 
 // File name with link, file size, who uploaded, article referencing photo
