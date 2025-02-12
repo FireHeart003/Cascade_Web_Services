@@ -12,7 +12,11 @@
   <link rel="stylesheet" href="css/foundation-icons/foundation-icons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.1.2/jsoneditor.min.css" type="text/css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+  <script type="text/javascript" charset="utf-8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.1.2/jsoneditor.min.js"></script>
+  <script src = "https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+
 
 </head>
 
@@ -29,13 +33,28 @@
         <a onclick="getSites()" class="button postfix">Get Folder IDs</a>
       </label>
     </div>
- 
-  <div class = "row">
-    <div class = "large-8 columns">
-      <ul id="root">
-      </ul>
+
+    <div>
+      <table id="myTable" class="display" style = "width: 100%">
+        <thead>
+            <tr>
+                <th>Image Name</th>
+                <th>File Size(in KB)</th>
+                <th>Who Uploaded</th>
+                <th>Article(s) Referencing Image</th>
+            </tr>
+        </thead>
+        <tbody id = "tableRow">
+
+        </tbody>
+      </table>
     </div>
-  </div>
+    <div>
+      <p id = "status"></p>
+    </div>
+      
+
+
   <script src="../config.js"></script>
   <script src="js/jquery.min.js"></script>
   <script src="js/foundation.min.js"></script>
