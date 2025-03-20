@@ -2,33 +2,78 @@ const cascadeEP = "https://cascade.fiu.edu"
 const editEP =  cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
+const publishEP = cascadeEP + "/api/v1/publish";
+
 const APIKey = config.API_KEY;
 
 async function changeTags() {
-    tags =['2c17ac650a73710b3f551545e8179288', '681585cb0a73710b6c85c45beff6c400', "681586e70a73710b6c85c45b702b3a58"]
+    cnt = 0;
     for(let i = 0; i< tags.length; i++){
         try {
             var json = await readAsset("page", tags[i]); //Read Asset
 
             arrTag = json.page.tags // Get array of tags
 
-            // arrTag.push({"name": "HelloWorld"}) // Adds new tag
             for(let i = 0; i< arrTag.length; i++){
-                if(arrTag[i].name === 'HelloWorld'){ // If tag = 'NathanChen'
-                    console.log('deleting in progress')
+                if(arrTag[i].name === 'Robert Stempel College of Public Heal'){ // If tag = 'NathanChen'
+                    console.log('deleting in progress');
                     // arrTag[i].name = 'NathanChen'; //Edits a tag
                     arrTag.splice(i, 1); //Deletes a tag
+                    arrTag.push({"name": "Robert Stempel College of Public Health and Social Work"}); // Adds new tag
                     editAsset("page", tags[i], json);  //Edit asset
+                    cnt += 1;
                     break;  
                 }
             }
+
             
         } catch(error) {
             console.error(`: ${error}`);
         }
     }
+    console.log(cnt)
 }
 
+async function publishPosts(){
+    cnt = 0;
+    console.log("Total Pages to be Published: " + pageId.length);
+    for(let i = 0; i< pageId.length; i++){
+        try{
+            asset = await publishAsset("page", pageId[i]);
+            console.log(asset);
+            cnt += 1;
+        } 
+        catch(error){
+            console.error(`: ${error}`);
+        }
+    }
+    console.log("Pages successfully published: " + cnt);
+}
+
+// Publishes an asset in Cascade 
+async function publishAsset(type, id) {
+    try {
+        let response = await fetch( publishEP + "" + "/"+ type +"/" + id, { 
+            "headers": {
+                "Authorization": "Bearer "+ APIKey,
+                "Access-Control-Allow-Origin": "*"
+                },
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "mode": "cors"
+            }
+        );
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        } 
+
+        var json = await response.json();
+        return json;
+    } catch(error) {
+        console.error(`: ${error}`);
+        return {"success":false};
+    }
+}
 
 // Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type,id) {
