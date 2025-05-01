@@ -7,7 +7,10 @@ const publishEP = cascadeEP + "/api/v1/publish";
 const APIKey = config.API_KEY;
 
 async function changeTags() {
-    tags = [];
+    tags = [
+        //Insert tag IDs
+    ];
+
     cnt = 0;
     for(let i = 0; i< tags.length; i++){
         try {
@@ -16,28 +19,33 @@ async function changeTags() {
             arrTag = json.page.tags // Get array of tags
 
             for(let i = 0; i< arrTag.length; i++){
-                if(arrTag[i].name === 'Robert Stempel College of Public Heal'){ // If tag = 'NathanChen'
+                if(arrTag[i].name === ''){ // If tag = 'Insert_Tag_Name'
                     console.log('deleting in progress');
-                    // arrTag[i].name = 'NathanChen'; //Edits a tag
-                    arrTag.splice(i, 1); //Deletes a tag
-                    arrTag.push({"name": "Robert Stempel College of Public Health and Social Work"}); // Adds new tag
+                    arrTag[i].name = ''; //Edits a tag name
+                    // arrTag.splice(i, 1); //Deletes a tag
+                    // arrTag.push({"name": ""}); // Adds new tag
                     editAsset("page", tags[i], json);  //Edit asset
                     cnt += 1;
                     break;  
                 }
             }
-
-            
         } catch(error) {
             console.error(`: ${error}`);
         }
     }
-    console.log(cnt)
+    console.log("Deleted: " + cnt)
+
+    const div = document.getElementById("status");
+    const p = document.createElement("p");
+    p.textContent = "Deleted: " + cnt;
+    div.appendChild(p);
+
+    publishPosts(tags)
 }
 
-async function publishPosts(){
+async function publishPosts(tags){
     cnt = 0;
-    pageId = [];
+    pageId = tags;
     console.log("Total Pages to be Published: " + pageId.length);
     for(let i = 0; i< pageId.length; i++){
         try{
@@ -50,6 +58,10 @@ async function publishPosts(){
         }
     }
     console.log("Pages successfully published: " + cnt);
+    const div = document.getElementById("status");
+    const p = document.createElement("p");
+    p.textContent = "Pages successfully published: " + cnt;
+    div.appendChild(p);
 }
 
 // Publishes an asset in Cascade 
