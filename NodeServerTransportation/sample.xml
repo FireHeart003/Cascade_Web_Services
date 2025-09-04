@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transportationDepartment>
+    <location type="parkingLot" id="PL001">
+        <name>Downtown Parking Lot</name>
+        <capacity>150</capacity>
+        <occupied>120</occupied>
+        <cars>
+            <car licensePlate="ABC123" type="sedan" />
+            <car licensePlate="XYZ789" type="SUV" />
+            <!-- Additional cars here -->
+        </cars>
+    </location>
+
+    <location type="garage" id="G001">
+        <name>Main Street Garage</name>
+        <capacity>200</capacity>
+        <occupied>175</occupied>
+        <cars>
+            <car licensePlate="LMN456" type="electric" />
+            <car licensePlate="DEF321" type="truck" />
+            <!-- Additional cars here -->
+        </cars>
+    </location>
+
+    <location type="parkingLot" id="PL002">
+        <name>Airport Parking Lot</name>
+        <capacity>300</capacity>
+        <occupied>298</occupied>
+        <cars>
+            <car licensePlate="JKL888" type="sedan" />
+            <car licensePlate="QRS999" type="SUV" />
+        </cars>
+    </location>
+</transportationDepartment>
