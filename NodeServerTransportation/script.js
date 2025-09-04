@@ -35,12 +35,12 @@ async function updateCascadeFile() {
             asset.file.text = data;
             const status = await editAsset("file", fileId, asset);
             console.log("Transfer Success Status: "+ status.success);
+            console.log("================================================================================");
         } 
         catch(error) {
             console.error(`: ${error}`);
         }
     });   
-    console.log("================================================================================");
 }
 
 // Edits an asset in Cascade with the given parameters for the update
