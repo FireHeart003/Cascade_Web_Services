@@ -11,6 +11,9 @@ const cascadeEP = "https://cascade.fiu.edu"
 const editEP =  cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
 
+// Initial call
+updateCascadeFile();
+
 // Runs every 5 minutes
 setInterval(updateCascadeFile, 300000);
 
