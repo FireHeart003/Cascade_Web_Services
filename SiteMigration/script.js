@@ -172,6 +172,36 @@ async function copyContents(oldAsset, newAsset) {
     }
 }
 
+async function updateDate() {
+    for (let i = 0; i < pages.length; i++) {
+        const asset = await readAsset("page", pages[i]);
+        console.log(asset);
+        let contentAreaNode = asset.page.structuredData.structuredDataNodes.find(node => node.identifier === "post-content");
+        let textContent = contentAreaNode.text;
+        const match = textContent.match(/[A-Za-z]+ \d{1,2}, \d{4}/);
+        const date = new Date(match[0]);
+        const isoFormat = date.toISOString();
+
+        const removeDateRegex = new RegExp(`<p><strong>${match[0]}</strong></p>`, 'g');
+
+        const newContent = textContent.replace(removeDateRegex, '');
+
+        console.log(asset.page.id + ": " + isoFormat);
+        asset.page.metadata.startDate = isoFormat;
+        contentAreaNode.text = newContent;
+        const success = await editAsset("page", pages[i], asset);
+        if (success.success === "false") {
+            console.log(pages[i] + ": " + success);
+        }
+        else {
+            console.log(success)
+
+        }
+        operations += 1;
+    }
+    console.log(operations);
+}
+
 // Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type, id) {
     var assetType = type;
