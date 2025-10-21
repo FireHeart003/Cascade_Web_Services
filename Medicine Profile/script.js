@@ -8,6 +8,7 @@ const APIKey = config.API_KEY;
 
 let operations = 0;
 
+
 async function performSearch() {
     const json = await readAsset("folder", "");
     const children = json.folder.children;
@@ -15,8 +16,10 @@ async function performSearch() {
         if (children[i].type == "page") {
             let relationships = await checkRelationships("page", children[i].id);
             if (relationships.length == 0) {
-                let name = children[i].path.path.split("/");
-                document.getElementById("results").innerHTML += `<li><a href = "https://cascade.fiu.edu/entity/open.act?id=${children[i].id}&type=page">${name[name.length - 1]}: ${children[i].id}</a></li>`
+                let page = await readAsset("page", children[i].id);
+                let department = page.page.structuredData.structuredDataNodes[6].text;
+                let name = page.page.metadata.displayName;
+                document.getElementById("results").innerHTML += `${name}+${department}+<a href = "https://cascade.fiu.edu/entity/open.act?id=${children[i].id}&type=page">${children[i].id}</a><br>`
             }
         }
     }
