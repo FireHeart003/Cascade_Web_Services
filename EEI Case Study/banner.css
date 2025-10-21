@@ -1,0 +1,52 @@
+
+#banner.banner-flex.wide-banner .content-flex .content{
+     max-width: 100%;
+     width: 100%;
+     padding: 0;
+}
+
+.wide-banner .equation-banner{
+     background: #000000;
+}
+
+.wide-banner.equation-banner h1{
+    text-align: center;
+    font-size: 4rem;
+}
+
+.wide-banner.equation-banner .content{
+    text-align: center;
+}
+
+/* .steps {
+    position: relative;          
+    margin-bottom: 1rem;
+    padding-right: 3rem;         
+}
+
+
+.steps::after {
+    content: "\f138";
+    font-family: FontAwesome;
+    color: #fc0;
+    position: absolute;
+    right: 15rem;                
+    top: 50%;
+    transform: translateY(-50%);
+} */
+
+.steps a{
+	display: block;
+}
+
+.steps p{
+	 max-width: 100%;
+	 width: 100%;
+}
+.steps::after {
+    content: "\f138";
+    font-family: FontAwesome;
+    color: #fc0;
+    position: absolute;
+    right: 0;
+}

@@ -1,0 +1,152 @@
+/* .body{
+    
+} */
+
+.title-section {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 0;
+
+    .country-left {
+        text-align: right;
+    }
+
+    .country-right {
+        text-align: left;
+    }
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 2rem;
+}
+
+.versus {
+    border: 2px solid #F8C93E;
+    border-radius: 50%;
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    color: #F8C93E;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.line {
+    flex: 1;
+    height: 1px;
+    background: #999;
+}
+
+
+.versus {
+    border: 2px solid #F8C93E;
+    border-radius: 50%;
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    color: #F8C93E;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.case-study {
+    .card-container{
+        display: flex;
+        flex-direction: row;
+        /* gap: 0.5rem; */
+        margin: 2rem 0;
+        border: 1px solid #eee;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .col-left{
+ flex: 1;
+  padding: 2rem;  
+      /* border-right: 2px solid rgba(0, 0, 0, 0.05);  */
+  
+}
+
+    .col-right{
+ flex: 1;
+  padding: 2rem;  
+      border-left: 2px solid rgba(0, 0, 0, 0.05); /* Add divider */
+}
+
+    
+
+    .section {
+        /* margin: 2rem 0;
+        border: 1px solid #eee;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
+    }
+
+    .icon-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .icon {
+            text-align: center;
+            color: #fff;
+            font-family: Georgia, Times, "Times New Roman", serif;
+            font-size: 0.875rem;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.25rem;
+            padding-top: 1.875rem;
+            width: 100%;
+        }
+
+        .icon span {
+            font-size: 2.813rem;
+        }
+
+        .blue {
+            background: #1e376c;
+        }
+    }
+
+    button {
+        background: #ffcc33;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .content {
+        ul{
+            margin-bottom: 0;
+        }
+
+        .features-list{
+            margin-bottom: 1.25rem;
+        }
+
+        .sources-list{
+            margin-bottom: 1.25rem;
+        }
+    }
+}
+
+.reveal-modal {
+    .modal-caption {
+        margin-top: 1.25rem;
+    }
+    
+}

@@ -1,0 +1,139 @@
+.row.articleBody{
+    max-width: 80rem;
+}
+.main-content{
+     max-width: 80rem !important;
+     width: 100%;
+}
+ .title-section {
+     display: flex;
+     justify-content: center;
+     margin: 3rem 0;
+     .country-left {
+         text-align: right;
+    }
+     .country-right {
+         text-align: left;
+    }
+}
+ .title {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 100%;
+     gap: 2rem;
+}
+
+.title .row {
+    width: 100%;
+}
+
+ .line {
+     flex: 1;
+     height: 1px;
+     background: #999;
+}
+ .versus {
+     border: 2px solid #F8C93E;
+     border-radius: 50%;
+     width: 6rem;
+     height: 6rem;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     background: #fff;
+     color: #F8C93E;
+     font-size: 2rem;
+     font-weight: bold;
+}
+ .case-study {
+     width: 100%;
+     margin-bottom: 6rem;
+     .card-container{
+         display: flex;
+         flex-direction: row;
+         gap: 0.5rem;
+         margin-bottom: 1rem;
+    }
+     .section {
+         margin: 2rem 0;
+         border: 2px solid #eee;
+         padding: 1rem;
+         border-radius: 8px;
+         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+         &.hazard{
+             height: 100%;
+             .content {
+                 padding-right: 0px;
+                 h4 i{
+                     font-size:1.2rem;
+                 }
+                 p{
+                     font-size: 1rem;
+                 }
+            }
+         }
+    }
+     .icon-col {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         .icon {
+             text-align: center;
+             color: #fff;
+             font-family: Georgia, Times, "Times New Roman", serif;
+             font-size: 0.875rem;
+             padding-bottom: 1.25rem;
+             margin-bottom: 1.25rem;
+             padding-top: 1.875rem;
+             width: 100%;
+        }
+         .icon .icon-symbol {
+             font-size: 2.813rem;
+        }
+    }
+     button {
+         background: #ffcc33;
+         border: none;
+         padding: 0.5rem 1rem;
+         margin-right: 0.5rem;
+         cursor: pointer;
+         border-radius: 4px;
+         font-weight: bold;
+    }
+     .content {
+         ul{
+             margin-bottom: 0;
+        }
+         .features-list{
+             margin-bottom: 1.25rem;
+        }
+         .sources-list{
+             margin-bottom: 1.25rem;
+        }
+    }
+     .fiu-background-gold .icon-symbol, .fiu-background-gold .icon-name{
+         color: #000;
+    }
+}
+ .reveal-modal {
+     .modal-caption {
+         margin-top: 1.25rem;
+    }
+}
+
+@media (max-width: 810px){
+    .case-study .card-container{
+        margin-bottom: 1.25rem;
+        flex-direction: column;
+        .columns {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .col-right .section.row{
+            display: flex;
+            flex-direction: column-reverse;
+        }
+    }
+}
+ 
