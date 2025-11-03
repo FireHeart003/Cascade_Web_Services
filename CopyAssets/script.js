@@ -7,6 +7,16 @@ const publishEP = cascadeEP + "/api/v1/publish";
 const APIKey = config.API_KEY;
 sourceBlock = "";
 newBlock = "";
+sourcePage = "";
+newPage = "";
+
+async function copyAsset(){
+    var sourceJson = await readAsset("page", sourcePage);
+    var newJson = await readAsset("page", newPage);
+    newJson.page.structuredData = sourceJson.page.structuredData;
+    let editResponse = await editAsset("page", newPage, newJson);
+    console.log(editResponse);
+}   
 
 async function copyBlock(){
     var sourceJson = await readAsset("block", sourceBlock);
