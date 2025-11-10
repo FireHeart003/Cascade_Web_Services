@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Services - Load CSV Data - Profiles</title>
+</head>
+
+<body>
+    <button id="csvButton">Load Users of Groups</button>
+    <div id="output"></div>
+
+
+</body>
+<script>
+    async function parseCSV() {
+        try {
+            console.log("button clicked");
+            const response = await fetch('/api/get-data');
+            const data = await response.json();
+            console.log(data);
+
+            const profileResponse = await fetch('/api/create-profiles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const profileData = await profileResponse.json();
+            const output = document.getElementById('output');
+            output.innerHTML = profileData.data;
+            // output.innerHTML = `<pre>${JSON.stringify(profileData, null, 2)}</pre>`;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    const myButton = document.getElementById('csvButton');
+    myButton.addEventListener('click', parseCSV);
+</script>
+
+</html>
