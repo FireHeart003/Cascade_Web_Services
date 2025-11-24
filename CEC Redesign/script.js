@@ -43,7 +43,7 @@ async function applyProgramFilters() {
         newFilterNode.blockPath = "/degrees-programs/items/" + programName;
         currentFilter.structuredDataNodes.push(newFilterNode);
         
-        let result = await editAsset("block", "924b4bb20a73710b3ca6c92f4ed2963e", filters);
+        let result = await editAsset("block", "", filters);
         if (result.success === true) {
             document.getElementById("output").innerHTML += `|--- ✅ ${programs[i]}: Created successfully. <br>`;
         } else {
