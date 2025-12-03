@@ -1,0 +1,324 @@
+const cascadeEP = "https://cascade.fiu.edu"
+const editEP = cascadeEP + "/api/v1/edit";
+const readEP = cascadeEP + "/api/v1/read";
+const createEP = cascadeEP + "/api/v1/create";
+const publishEP = cascadeEP + "/api/v1/publish";
+
+const APIKey = config.API_KEY;
+profiles = [
+]
+
+async function importProfiles() {
+    const response = await fetch('./cecProfiles.csv'); 
+    const data = await response.text();
+    const parsedData = parseCsv(data);
+
+    for (let i = 140; i < 145; i++) {
+        console.log(parsedData[i]);
+        try {
+            let name = parsedData[i]["Name - First"] + " " + parsedData[i]["Name - Last"];
+
+            let blankAsset = {
+                'page': {
+                    'name': name.toLowerCase().replaceAll("(","").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', ""),
+                    'parentFolderPath': "about/directory/profiles",
+                    'siteName': "College of Engineering and Computing - CEC",
+                    'contentTypeId': "",
+                    'metadata':  {
+                        "displayName": name,
+                        // "summary": `Learn more about ${name}, ${position.toLowerCase()} at FIU's ${department}.`
+                    },
+                    'structuredData': {
+                        "structuredDataNodes": []
+                    }
+                }
+            }
+
+            let result = await createAsset(blankAsset);
+            let newId = result.createdAssetId;
+            if (result.success === true) {
+                document.getElementById("output").innerHTML += `|--- ${i}: ✅ ${name} created<br>`;
+            } else {
+                document.getElementById("output").innerHTML += `|--- ${i}: ❌ Error creating page ${name}<br>`;
+            }
+
+            let newProfile = await readAsset("page", newId);
+            newProfile.page.structuredData.structuredDataNodes[1].text = parsedData[i]["Title/Position"];
+            newProfile.page.structuredData.structuredDataNodes[6].text = parsedData[i]["Department"];
+            
+            let researchInterest = parsedData[i]["List all research interests (if applicable)."];
+            if(researchInterest){
+                newProfile.page.structuredData.structuredDataNodes[4].text = "::CONTENT-XML-CHECKBOX::Yes";
+            }
+
+            let office = parsedData[i]["Office"];
+            if(office.length > 4) {
+                newProfile.page.structuredData.structuredDataNodes[7].text = office;
+            }
+
+            let phone = parsedData[i]["FIU Phone Number"];
+            if(phone) {
+                newProfile.page.structuredData.structuredDataNodes[8].text = phone;
+            }
+
+            let email = parsedData[i]["Email"];
+            if(email) {
+                newProfile.page.structuredData.structuredDataNodes[9].text = email;
+            }
+
+            let discoveryLink = parsedData[i]["Link to your FIU Discovery profile (if applicable)."];
+            customFieldTemplate = {};
+            if(discoveryLink && discoveryLink.includes("discovery.fiu.edu")) {
+                newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[0].text = "Publications";
+                newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[1].text = "external-link";
+                newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[3].text = "FIU Discovery";
+                newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[5].text = discoveryLink;
+            }
+            let labLink = parsedData[i]["Link to your center, lab or institute (if applicable)."];
+            if(labLink) {
+                if(discoveryLink){
+                    template = {
+                        "type": "group",
+                        "identifier" : "custom-field",
+                        "structuredDataNodes": [
+                            {
+                                "type": "text",
+                                "identifier": "label",
+                                "text": "Lab"
+                            },
+                            {
+                                "type": "text",
+                                "identifier": "type",
+                                "text": "external-link"
+                            },
+                            {
+                                "type": "text",
+                                "identifier": "value",
+                            },
+                            {
+                                "type": "text", 
+                                "identifier": "link-text",
+                                "text": ""
+                            },
+                            {
+                                "type": "asset",
+                                "identifier": "internal-link",
+                                "assetType": "page,file,symlink"
+                            },
+                            {
+                                "type": "text",
+                                "identifier": "external-link",
+                                "text": labLink
+                            }
+                        ]
+                    }
+                    newProfile.page.structuredData.structuredDataNodes.push(template);
+                }
+                else{
+                    newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[0].text = "Lab";
+                    newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[1].text = "external-link";
+                    newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[3].text = "";
+                    newProfile.page.structuredData.structuredDataNodes[12].structuredDataNodes[5].text = labLink;
+                }
+            }
+
+            let biography = parsedData[i]["Enter your most up-to-date professional biography. Make sure your bio follows the FIU Style Guide."];
+            let awards = parsedData[i]["List relevant professional honors and awards with the year (if applicable)."];
+            let education = parsedData[i]["List all completed academic degrees with the year."];
+
+            if(biography !== null && biography !== ""){
+                console.log(biography)
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[0].text = "Biography";
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text = "<p>" + biography.replaceAll("\"", "").replaceAll("\n\n", "</p><p>").replaceAll("\n", "</p><p>") + "</p>";
+                if(awards){
+                    console.log(awards);
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += "<h2>Awards &amp; Honors</h2>";
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += `<ul class = "list-unstyled"><li>${awards.replaceAll("\"", "").replaceAll("\n\n", "</li><li>").replaceAll("\n", "</li><li>")}</li></ul>`;
+                }
+                if(education){
+                    console.log(education)
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += "<h2>Education</h2>";
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += `<ul class = "list-unstyled"><li>${education.replaceAll("\"", "").replaceAll("\n\n", "</li><li>").replaceAll("\n", "</li><li>")}</li></ul>`;
+                }
+            }           
+            else if(awards !== null && awards !== ""){
+                console.log("Awards without bio")
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[0].text = "Awards & Honors";
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text = `<ul class = "list-unstyled"><li>${awards.replaceAll("\"", "").replaceAll("\n\n", "</li><li>").replaceAll("\n", "</li><li>")}</li></ul>`;
+                if(education){
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += "<h2>Education</h2>";
+                    newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text += `<ul class = "list-unstyled"><li>${education.replaceAll("\"", "").replaceAll("\n\n", "</li><li>").replaceAll("\n", "</li><li>")}</li></ul>`;
+                }
+            }
+            else if(education !== null && education !== ""){
+                console.log("Education without bio")
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[0].text = "Education";
+                newProfile.page.structuredData.structuredDataNodes[13].structuredDataNodes[1].text = `<ul class = "list-unstyled"><li>${education.replaceAll("\"", "").replaceAll("\n\n", "</li><li>").replaceAll("\n", "</li><li>")}</li></ul>`;
+            }
+
+            let researchInterestText = parsedData[i]["List all research interests (if applicable)."];
+            if(researchInterestText) {
+                console.log(researchInterestText)
+                researchInterestText = researchInterestText.replaceAll("\"", "");
+                researchArray = researchInterestText.split(",");
+                if(researchArray.length <= 2){
+                    researchInterestText = "\n" + researchInterestText;
+                    researchInterestText = researchInterestText.replace("-", "\n\n-");
+                    researchArray = researchInterestText.split("\n\n-");
+                    console.log(researchInterestText)
+                    if(researchArray.length <= 2){
+                        researchInterestText = researchInterestText.replace("-", "\n-");
+                        console.log(researchInterestText)
+                        researchArray = researchInterestText.split("\n-");
+                    }
+                    if(researchArray.length <= 2){
+                        researchArray = researchInterestText.split("\n-");
+                    }
+                }
+                for(let j = 0; j < researchArray.length; j++){
+                    researchArray[j] = researchArray[j].trim();
+                    researchArray[j] = researchArray[j].charAt(0).toUpperCase() + researchArray[j].slice(1).trim();
+                    if (j === researchArray.length -1){
+                        researchArray[j] = researchArray[j].toLowerCase().replaceAll("and", "");
+                        researchArray[j] = researchArray[j].trim();
+                        researchArray[j] = researchArray[j].charAt(0).toUpperCase() + researchArray[j].slice(1).trim();
+                    }
+                }
+                console.log(researchArray)
+                researchInterestText = researchArray.join(",");
+                newProfile.page.structuredData.structuredDataNodes[14].text = `<h2 class="display-text--medium">Research Interests</h2><ul class="list-unstyled"><li>${researchInterestText.replaceAll(",", "</li><li>")}</li></ul>`;
+            }
+
+
+            let editResult = await editAsset("page", newId, newProfile);
+            if (editResult.success === true) {
+                document.getElementById("output").innerHTML += `|--- ${i}: ✅ ${name} updated<br><br>`;
+            } else {
+                document.getElementById("output").innerHTML += `|--- ${i}: ❌ Error updating page ${name}<br><br>`;
+            }
+        } catch (error) {
+            console.error(`: ${error}`);
+        }
+    }
+    console.log("Finished importing profiles");
+}
+
+function parseCsv(csvText) {
+    parsedData = "";
+    Papa.parse(csvText, {
+        header: true,          // Automatically use first row as headers
+        dynamicTyping: true,   // Convert numbers and booleans
+        skipEmptyLines: true,  
+        complete: function(results) {
+            parsedData = results.data;
+        },
+        error: function(err) {
+            console.error("Parsing error:", err);
+        }
+    });
+    return parsedData;
+}
+
+async function createReferences() {
+    profileId = ["e3f61e9a0a73710b3071056e63c7aa03"];
+    for (let i = 0; i < 1; i++) {
+        profile = await readAsset("page", profileId[i]);
+        console.log(profile);
+        let directory = "";
+
+
+        let reference = {
+            "reference": {
+                "referencedAssetId" : profileId[i],
+                "referencedAssetType" : "page",
+                "parentFolderPath": "about/directory/profiles/" + directory,
+                "siteName": "College of Engineering and Computing - CEC",
+                "name": profile.page.name
+            }
+        };        
+        let result = await createAsset(reference);
+        if (result.success === true) {
+            document.getElementById("output").innerHTML += `|--- ✅ ${profileId[i]}: Reference created successfully. <br>`;
+        } else {
+            document.getElementById("output").innerHTML += `|--- ❌ ${profileId[i]}: Error creating reference. <br>`;
+            console.log(result);
+        }
+    }
+    document.getElementById("output").innerHTML += "Finished applying program filters";
+}
+
+// Reads an asset given an id and type and returns a JSON object of the asset
+async function readAsset(type, id) {
+    var assetType = type;
+    var assetID = id;
+    try {
+        console.log("trying to read " + id);
+        var response = await fetch(readEP + "/" + assetType + "/" + assetID, {
+            "headers": {
+                "Authorization": "Bearer " + APIKey,
+                "Access-Control-Allow-Origin": "*"
+            },
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "method": "GET",
+            "mode": "cors"
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        var json = await response.json();
+        return json.asset;
+
+    } catch (error) {
+        console.error(`: ${error}`);
+    }
+}
+
+// Creates asset on Cascade given parameters for the asset
+async function createAsset(asset) {
+    try {
+        var response = await fetch(createEP, {
+            "headers": {
+                "Authorization": "Bearer " + APIKey,
+                "Access-Control-Allow-Origin": "*"
+            },
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "method": "POST",
+            "mode": "cors",
+            "body": JSON.stringify({ "asset": asset })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        var json = await response.json();
+        return json;
+
+    } catch (error) {
+        console.error(`: ${error}`);
+    }
+}
+
+// Edits an asset in Cascade with the given parameters for the update
+async function editAsset(type, id, asset) {
+    try {
+        let response = await fetch(editEP + "" + "/" + type + "/" + id,
+            {
+                method: 'POST',
+                headers: { "Authorization": "Bearer " + APIKey, "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ 'asset': asset })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        var json = await response.json();
+        console.log(json);
+        return json;
+
+
+    } catch (error) {
+        console.error(`: ${error}`);
+        return { "success": false };
+    }
+}
