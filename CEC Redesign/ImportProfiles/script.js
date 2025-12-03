@@ -1,3 +1,5 @@
+// const { profile } = require("console");
+
 const cascadeEP = "https://cascade.fiu.edu"
 const editEP = cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
@@ -26,7 +28,7 @@ async function importProfiles() {
                     'contentTypeId': "",
                     'metadata':  {
                         "displayName": name,
-                        // "summary": `Learn more about ${name}, ${position.toLowerCase()} at FIU's ${department}.`
+                        // "summary": `Learn more about ${name}, ${position.toLowerCase()} at FIU's College of engineering & Computing.`
                     },
                     'structuredData': {
                         "structuredDataNodes": []
@@ -220,31 +222,81 @@ function parseCsv(csvText) {
 }
 
 async function createReferences() {
-    profileId = ["e3f61e9a0a73710b3071056e63c7aa03"];
-    for (let i = 0; i < 1; i++) {
-        profile = await readAsset("page", profileId[i]);
-        console.log(profile);
-        let directory = "";
+    const response = await fetch('./updatedCecProfiles.csv'); 
+    const data = await response.text();
+    const parsedData = parseCsv(data);
+//start at 50
+    for (let i = 137; i < 138; i++) {
+        profile = parsedData[i];
+        let name = profile["Name - First"] + " " + profile["Name - Last"];
 
+        let department = "";
 
-        let reference = {
-            "reference": {
-                "referencedAssetId" : profileId[i],
-                "referencedAssetType" : "page",
-                "parentFolderPath": "about/directory/profiles/" + directory,
-                "siteName": "College of Engineering and Computing - CEC",
-                "name": profile.page.name
-            }
-        };        
-        let result = await createAsset(reference);
-        if (result.success === true) {
-            document.getElementById("output").innerHTML += `|--- ✅ ${profileId[i]}: Reference created successfully. <br>`;
-        } else {
-            document.getElementById("output").innerHTML += `|--- ❌ ${profileId[i]}: Error creating reference. <br>`;
-            console.log(result);
+        if(profile["Department"].includes("Biomedical")){
+            department = "biomedical-engineering";
         }
+        else if(profile["Department"].includes("Civil")){
+            department = "civil-environmental-engineering";     
+        }
+        else if(profile["Department"].includes("Multidisciplinary")){
+            department = "multidisciplinary-engineering-computing-education-systems-and-management";     
+        }
+        else if(profile["Department"].includes("Computing")){
+            department = "computing-and-information-sciences";
+        }
+        else if(profile["Department"].includes("Construction")){
+            department = "construction";     
+        }
+        else if(profile["Department"].includes("Electrical")){
+            department = "electrical-computer-engineering";     
+        }
+        else if(profile["Department"].includes("Mechanical")){
+            department = "mechanical-materials-engineering";     
+        }
+
+        if(department !== ""){
+            await createReference(name, department);
+        }
+        else{
+            document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
+        }
+/*
+        let position = "";
+        if(profile["Title/Position"].includes("Professor")){
+            position = "faculty";
+        }
+        else if(profile["Title/Position"].includes("Advisor")){
+            position = "advisors";
+        }
+        else if(profile["Title/Position"].includes("Dean")){
+            position = "leadership";
+        }
+        else{
+            position = "staff";
+        }
+        await createReference(name, position);*/
     }
     document.getElementById("output").innerHTML += "Finished applying program filters";
+}
+
+async function createReference(name, path){
+        let reference = {
+            "reference": {
+                "referencedAssetPath" : "about/directory/profiles/" + name.toLowerCase().replaceAll("(","").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', ""),
+                "referencedAssetType" : "page",
+                "parentFolderPath": "about/directory/profiles/" + path,
+                "siteName": "College of Engineering and Computing - CEC",
+                "name": name.toLowerCase().replaceAll("(","").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', "")
+            }
+        };        
+
+        let result = await createAsset(reference);
+        console.log(result);
+        if (result.success === true) {
+            document.getElementById("output").innerHTML += `|--- ✅ ${name}: Reference created successfully in ${path}. <a href = "https://cascade.fiu.edu/entity/open.act?id=${result.createdAssetId}&type=reference" target = "_blank">Link here</a> <br>`;
+        } else {
+            document.getElementById("output").innerHTML += `|--- ❌ ${name}: Error creating reference in ${path}. <br>`;
+        }
 }
 
 // Reads an asset given an id and type and returns a JSON object of the asset
