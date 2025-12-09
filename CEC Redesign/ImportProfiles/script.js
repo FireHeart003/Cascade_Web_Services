@@ -225,11 +225,11 @@ async function createReferences() {
     const response = await fetch('./updatedCecProfiles.csv'); 
     const data = await response.text();
     const parsedData = parseCsv(data);
-//start at 50
-    for (let i = 137; i < 138; i++) {
+//start at 90
+    for (let i = 130; i < 144; i++) {
         profile = parsedData[i];
         let name = profile["Name - First"] + " " + profile["Name - Last"];
-
+/*
         let department = "";
 
         if(profile["Department"].includes("Biomedical")){
@@ -259,22 +259,53 @@ async function createReferences() {
         }
         else{
             document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
-        }
-/*
+        }*/
+
         let position = "";
-        if(profile["Title/Position"].includes("Professor")){
+        hasPosition = false;
+        cnt = 0;
+        console.log(name + ": " + profile["Title/Position"].toLowerCase());
+        if(profile["Title/Position"].toLowerCase().includes("professor")){
+            console.log("found professor");
             position = "faculty";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
         }
-        else if(profile["Title/Position"].includes("Advisor")){
+        if(profile["Title/Position"].toLowerCase().includes("advisor")){
+            console.log("found advisor");
             position = "advisors";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
         }
-        else if(profile["Title/Position"].includes("Dean")){
+        if(profile["Title/Position"].toLowerCase().includes("dean")){
+            console.log("found dean");
             position = "leadership";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
         }
-        else{
+        if(profile["Title/Position"].toLowerCase().includes("program coordinator")){
+            console.log("found program coordinator");
+            position = "program-coordinators";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+        if(profile["Title/Position"].toLowerCase().includes("program director")){
+            console.log("found program director");
+            position = "program-directors";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+
+        if(!hasPosition && cnt == 0){
             position = "staff";
+            console.log("defaulting to staff");
+            await createReference(name, position);
         }
-        await createReference(name, position);*/
     }
     document.getElementById("output").innerHTML += "Finished applying program filters";
 }
