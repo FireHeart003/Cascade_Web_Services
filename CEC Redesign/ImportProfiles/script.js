@@ -7,15 +7,14 @@ const createEP = cascadeEP + "/api/v1/create";
 const publishEP = cascadeEP + "/api/v1/publish";
 
 const APIKey = config.API_KEY;
-profiles = [
-]
+profiles = {}
 
 async function importProfiles() {
-    const response = await fetch('./cecProfiles.csv'); 
+    const response = await fetch('./extraProfiles.csv'); 
     const data = await response.text();
     const parsedData = parseCsv(data);
 
-    for (let i = 140; i < 145; i++) {
+    for (let i = 30; i < 39; i++) {
         console.log(parsedData[i]);
         try {
             let name = parsedData[i]["Name - First"] + " " + parsedData[i]["Name - Last"];
@@ -28,7 +27,7 @@ async function importProfiles() {
                     'contentTypeId': "",
                     'metadata':  {
                         "displayName": name,
-                        // "summary": `Learn more about ${name}, ${position.toLowerCase()} at FIU's College of engineering & Computing.`
+                        "summary": `Learn more about ${name}, ${parsedData[i]["Title/Position"].toLowerCase()} at FIU's College of Engineering & Computing.`
                     },
                     'structuredData': {
                         "structuredDataNodes": []
@@ -39,7 +38,7 @@ async function importProfiles() {
             let result = await createAsset(blankAsset);
             let newId = result.createdAssetId;
             if (result.success === true) {
-                document.getElementById("output").innerHTML += `|--- ${i}: ✅ ${name} created<br>`;
+                document.getElementById("output").innerHTML += `|--- ${i}: ✅ ${name} created <a target = "_blank" href = "https://cascade.fiu.edu/entity/open.act?id=${newId}&type=page">Link</a><br>`;
             } else {
                 document.getElementById("output").innerHTML += `|--- ${i}: ❌ Error creating page ${name}<br>`;
             }
@@ -63,7 +62,7 @@ async function importProfiles() {
                 newProfile.page.structuredData.structuredDataNodes[8].text = phone;
             }
 
-            let email = parsedData[i]["Email"];
+            let email = parsedData[i]["FIU Email"];
             if(email) {
                 newProfile.page.structuredData.structuredDataNodes[9].text = email;
             }
@@ -205,6 +204,37 @@ async function importProfiles() {
     console.log("Finished importing profiles");
 }
 
+async function updateImages() {
+    try{
+        const response = await fetch('./extraProfiles.csv'); 
+        const data = await response.text();
+        const parsedData = parseCsv(data);
+
+        for(let i = 0; i < 5; i++){
+            profile = parsedData[i];
+            let name = profile["Name - First"] + " " + profile["Name - Last"];
+            parsedName = name.toLowerCase().replaceAll("(","").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', "");
+            let assetId = profiles[parsedName];
+            console.log(typeof assetId);
+            console.log(parsedName)
+            console.log(assetId);
+            let profilePage = await readAsset("page", assetId);
+            profilePage.page.structuredData.structuredDataNodes[0].filePath = "/about/directory/profiles/_assets/images/" + parsedName + "-headshot.webp";
+
+            let editResult = await editAsset("page", assetId, profilePage);
+            if (editResult.success === true) {
+                document.getElementById("output").innerHTML += `|--- ${i}: ✅ ${name} updated<br><br>`;
+            } else {
+                document.getElementById("output").innerHTML += `|--- ${i}: ❌ Error updating page ${name}<br><br>`;
+            }
+        } 
+
+    }
+    catch(error){
+        console.error(`: ${error}`);
+    }
+}
+
 function parseCsv(csvText) {
     parsedData = "";
     Papa.parse(csvText, {
@@ -222,14 +252,14 @@ function parseCsv(csvText) {
 }
 
 async function createReferences() {
-    const response = await fetch('./updatedCecProfiles.csv'); 
+    const response = await fetch('./extraProfiles.csv'); 
     const data = await response.text();
     const parsedData = parseCsv(data);
 //start at 90
-    for (let i = 130; i < 144; i++) {
+    for (let i = 35; i < parsedData.length; i++) {
         profile = parsedData[i];
         let name = profile["Name - First"] + " " + profile["Name - Last"];
-/*
+
         let department = "";
 
         if(profile["Department"].includes("Biomedical")){
@@ -259,8 +289,8 @@ async function createReferences() {
         }
         else{
             document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
-        }*/
-
+        }
+/*
         let position = "";
         hasPosition = false;
         cnt = 0;
@@ -305,7 +335,7 @@ async function createReferences() {
             position = "staff";
             console.log("defaulting to staff");
             await createReference(name, position);
-        }
+        }*/
     }
     document.getElementById("output").innerHTML += "Finished applying program filters";
 }
