@@ -7,14 +7,15 @@ const createEP = cascadeEP + "/api/v1/create";
 const publishEP = cascadeEP + "/api/v1/publish";
 
 const APIKey = config.API_KEY;
-profiles = {};
+profiles = {
+}
 
 async function importProfiles() {
     const response = await fetch('./extraProfiles.csv');
     const data = await response.text();
     const parsedData = parseCsv(data);
 
-    for (let i = 30; i < 39; i++) {
+    for (let i = 10; i < 20; i++) {
         console.log(parsedData[i]);
         try {
             let name = parsedData[i]["Name - First"] + " " + parsedData[i]["Name - Last"];
@@ -53,7 +54,7 @@ async function importProfiles() {
             }
 
             let office = parsedData[i]["Office"];
-            if (office.length > 4) {
+            if (office && office.length > 4) {
                 newProfile.page.structuredData.structuredDataNodes[7].text = office;
             }
 
@@ -206,11 +207,12 @@ async function importProfiles() {
 
 async function updateImages() {
     try {
+        console.log("start")
         const response = await fetch('./extraProfiles.csv');
         const data = await response.text();
         const parsedData = parseCsv(data);
 
-        for (let i = 15; i < 40; i++) {
+        for (let i = 7; i < 20; i++) {
             profile = parsedData[i];
             let name = profile["Name - First"] + " " + profile["Name - Last"];
             parsedName = name.toLowerCase().replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', "");
@@ -219,7 +221,7 @@ async function updateImages() {
             console.log(parsedName)
             console.log(assetId);
             let profilePage = await readAsset("page", assetId);
-            profilePage.page.structuredData.structuredDataNodes[0].filePath = "/about/directory/profiles/_assets/images/" + parsedName + "-headshot.webp";
+            profilePage.page.structuredData.structuredDataNodes[0].filePath = "/about/directory/_assets/images/" + parsedName + "-headshot.webp";
 
             let editResult = await editAsset("page", assetId, profilePage);
             if (editResult.success === true) {
@@ -255,87 +257,87 @@ async function createReferences() {
     const response = await fetch('./extraProfiles.csv');
     const data = await response.text();
     const parsedData = parseCsv(data);
-    //start at 90
-    for (let i = 35; i < parsedData.length; i++) {
+
+    for (let i = 0; i < 20; i++) {
         profile = parsedData[i];
         let name = profile["Name - First"] + " " + profile["Name - Last"];
-
-        let department = "";
-
-        if (profile["Department"].includes("Biomedical")) {
-            department = "biomedical-engineering";
-        }
-        else if (profile["Department"].includes("Civil")) {
-            department = "civil-environmental-engineering";
-        }
-        else if (profile["Department"].includes("Multidisciplinary")) {
-            department = "multidisciplinary-engineering-computing-education-systems-and-management";
-        }
-        else if (profile["Department"].includes("Computing")) {
-            department = "computing-and-information-sciences";
-        }
-        else if (profile["Department"].includes("Construction")) {
-            department = "construction";
-        }
-        else if (profile["Department"].includes("Electrical")) {
-            department = "electrical-computer-engineering";
-        }
-        else if (profile["Department"].includes("Mechanical")) {
-            department = "mechanical-materials-engineering";
-        }
-
-        if (department !== "") {
-            await createReference(name, department);
-        }
-        else {
-            document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
-        }
         /*
-                let position = "";
-                hasPosition = false;
-                cnt = 0;
-                console.log(name + ": " + profile["Title/Position"].toLowerCase());
-                if(profile["Title/Position"].toLowerCase().includes("professor")){
-                    console.log("found professor");
-                    position = "faculty";
-                    hasPosition = true;
-                    cnt += 1;
-                    await createReference(name, position);
+                let department = "";
+        
+                if (profile["Department"].includes("Biomedical")) {
+                    department = "biomedical-engineering";
                 }
-                if(profile["Title/Position"].toLowerCase().includes("advisor")){
-                    console.log("found advisor");
-                    position = "advisors";
-                    hasPosition = true;
-                    cnt += 1;
-                    await createReference(name, position);
+                else if (profile["Department"].includes("Civil")) {
+                    department = "civil-environmental-engineering";
                 }
-                if(profile["Title/Position"].toLowerCase().includes("dean")){
-                    console.log("found dean");
-                    position = "leadership";
-                    hasPosition = true;
-                    cnt += 1;
-                    await createReference(name, position);
+                else if (profile["Department"].includes("Multidisciplinary")) {
+                    department = "multidisciplinary-engineering-computing-education-systems-and-management";
                 }
-                if(profile["Title/Position"].toLowerCase().includes("program coordinator")){
-                    console.log("found program coordinator");
-                    position = "program-coordinators";
-                    hasPosition = true;
-                    cnt += 1;
-                    await createReference(name, position);
+                else if (profile["Department"].includes("Computing")) {
+                    department = "computing-and-information-sciences";
                 }
-                if(profile["Title/Position"].toLowerCase().includes("program director")){
-                    console.log("found program director");
-                    position = "program-directors";
-                    hasPosition = true;
-                    cnt += 1;
-                    await createReference(name, position);
+                else if (profile["Department"].includes("Construction")) {
+                    department = "construction";
+                }
+                else if (profile["Department"].includes("Electrical")) {
+                    department = "electrical-computer-engineering";
+                }
+                else if (profile["Department"].includes("Mechanical")) {
+                    department = "mechanical-materials-engineering";
                 }
         
-                if(!hasPosition && cnt == 0){
-                    position = "staff";
-                    console.log("defaulting to staff");
-                    await createReference(name, position);
-                }*/
+                if (department !== "") {
+                    await createReference(name, department);
+                }
+                else {
+                    document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
+                }
+                */
+        let position = "";
+        hasPosition = false;
+        cnt = 0;
+        console.log(name + ": " + profile["Title/Position"].toLowerCase());
+        if (profile["Title/Position"].toLowerCase().includes("professor")) {
+            console.log("found professor");
+            position = "faculty";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+        if (profile["Title/Position"].toLowerCase().includes("advisor")) {
+            console.log("found advisor");
+            position = "advisors";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+        if (profile["Title/Position"].toLowerCase().includes("dean")) {
+            console.log("found dean");
+            position = "leadership";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+        if (profile["Title/Position"].toLowerCase().includes("program coordinator")) {
+            console.log("found program coordinator");
+            position = "program-coordinators";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+        if (profile["Title/Position"].toLowerCase().includes("program director")) {
+            console.log("found program director");
+            position = "program-directors";
+            hasPosition = true;
+            cnt += 1;
+            await createReference(name, position);
+        }
+
+        if (!hasPosition && cnt == 0) {
+            position = "staff";
+            console.log("defaulting to staff");
+            await createReference(name, position);
+        }
     }
     document.getElementById("output").innerHTML += "Finished applying program filters";
 }
