@@ -19,9 +19,9 @@ async function changeTags() {
             arrTag = json.page.tags // Get array of tags
 
             for(let i = 0; i< arrTag.length; i++){
-                if(arrTag[i].name === ''){ // If tag = 'Insert_Tag_Name'
+                if(arrTag[i].name === 'Office of Multimedia'){ // If tag = 'Insert_Tag_Name'
                     console.log('deleting in progress');
-                    arrTag[i].name = ''; //Edits a tag name
+                    arrTag[i].name = 'Multimedia Story'; //Edits a tag name
                     // arrTag.splice(i, 1); //Deletes a tag
                     // arrTag.push({"name": ""}); // Adds new tag
                     editAsset("page", tags[i], json);  //Edit asset

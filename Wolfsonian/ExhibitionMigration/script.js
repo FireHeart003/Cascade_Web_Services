@@ -5,7 +5,7 @@ const createEP = cascadeEP + "/api/v1/create";
 const publishEP = cascadeEP + "/api/v1/publish";
 const copyEP = cascadeEP + "/api/v1/copy";
 const APIKey = config.API_KEY;
-const pages = [""];
+const pages = [''];
 
 let operations = 0;
 async function beginTransfer() {
@@ -14,13 +14,13 @@ async function beginTransfer() {
             oldAsset = await readAsset("page", pages[i]);
             let displayName = oldAsset.page.metadata.title;
             let transformedName = sanitizeFileName(displayName);
-
+            console.log(transformedName)
             let blankAsset = {
                 'page': {
                     'name': transformedName.toLowerCase(),
-                    'parentFolderPath': "whats-on/exhibitions+installations/2015/11",
+                    'parentFolderPath': "whats-on/exhibitions+installations/2009/12",
                     'siteName': "The Wolfsonian - 2025",
-                    'contentTypeId': "",
+                    'contentTypeId': "507bbfee0a73710b06d73cd17545f75c",
                     'metadata':  oldAsset.page.metadata,
                         // "title": displayName,
                         // "displayName": displayName
@@ -31,7 +31,7 @@ async function beginTransfer() {
                 }
             }
             blankAsset.page.metadata.displayName = transformedName;
-            // blankAsset.page.name = "";
+            // blankAsset.page.name = "rhythms-of-modern-life-british-prints,-19141939".toLowerCase();
             let result = await createAsset(blankAsset);
 
             if (result.success === true) {

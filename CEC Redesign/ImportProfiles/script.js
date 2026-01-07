@@ -11,11 +11,11 @@ profiles = {
 }
 
 async function importProfiles() {
-    const response = await fetch('./extraProfiles.csv');
+    const response = await fetch('./newProfiles.csv');
     const data = await response.text();
     const parsedData = parseCsv(data);
 
-    for (let i = 10; i < 20; i++) {
+    for (let i = 13; i < 14; i++) {
         console.log(parsedData[i]);
         try {
             let name = parsedData[i]["Name - First"] + " " + parsedData[i]["Name - Last"];
@@ -25,7 +25,7 @@ async function importProfiles() {
                     'name': name.toLowerCase().replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "-").replaceAll('"', ""),
                     'parentFolderPath': "about/directory/profiles",
                     'siteName': "College of Engineering and Computing - CEC",
-                    'contentTypeId': "",
+                    'contentTypeId': "b3f88eaa0a73710b7b5b08424af7d83f",
                     'metadata': {
                         "displayName": name,
                         "summary": `Learn more about ${name}, ${parsedData[i]["Title/Position"].toLowerCase()} at FIU's College of Engineering & Computing.`
@@ -254,14 +254,14 @@ function parseCsv(csvText) {
 }
 
 async function createReferences() {
-    const response = await fetch('./extraProfiles.csv');
+    const response = await fetch('./newProfiles.csv');
     const data = await response.text();
     const parsedData = parseCsv(data);
 
     for (let i = 0; i < 20; i++) {
         profile = parsedData[i];
         let name = profile["Name - First"] + " " + profile["Name - Last"];
-        /*
+        
                 let department = "";
         
                 if (profile["Department"].includes("Biomedical")) {
@@ -292,7 +292,7 @@ async function createReferences() {
                 else {
                     document.getElementById("output").innerHTML += `|--- ❌ ${name}: No department found.<br>`;
                 }
-                */
+                /*
         let position = "";
         hasPosition = false;
         cnt = 0;
@@ -337,7 +337,7 @@ async function createReferences() {
             position = "staff";
             console.log("defaulting to staff");
             await createReference(name, position);
-        }
+        }*/
     }
     document.getElementById("output").innerHTML += "Finished applying program filters";
 }
