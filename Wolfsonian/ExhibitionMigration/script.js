@@ -5,7 +5,7 @@ const createEP = cascadeEP + "/api/v1/create";
 const publishEP = cascadeEP + "/api/v1/publish";
 const copyEP = cascadeEP + "/api/v1/copy";
 const APIKey = config.API_KEY;
-const pages = [''];
+const pages = ['37c907700a73710c6f16e7026856b518'];
 
 let operations = 0;
 async function beginTransfer() {
@@ -18,13 +18,13 @@ async function beginTransfer() {
             let blankAsset = {
                 'page': {
                     'name': transformedName.toLowerCase(),
-                    'parentFolderPath': "whats-on/exhibitions+installations/2009/12",
+                    'parentFolderPath': "whats-on/exhibitions+installations/2025/12",
                     'siteName': "The Wolfsonian - 2025",
                     'contentTypeId': "507bbfee0a73710b06d73cd17545f75c",
-                    'metadata':  oldAsset.page.metadata,
-                        // "title": displayName,
-                        // "displayName": displayName
-                    
+                    'metadata': oldAsset.page.metadata,
+                    // "title": displayName,
+                    // "displayName": displayName
+
                     'structuredData': {
                         "structuredDataNodes": []
                     }
@@ -100,8 +100,8 @@ async function copyContents(oldAsset, newAsset) {
 
     text = oldAssetNodes[7].text;
     console.log(text)
-        // contentAreaNode.text = contentAreaText.replaceAll('/_assets/images/blog/', '/blog/_assets/img/');
-    
+    // contentAreaNode.text = contentAreaText.replaceAll('/_assets/images/blog/', '/blog/_assets/img/');
+
     console.log(newAsset);
 
     let response = await editAsset("file", newAsset.page.id, newAsset);
@@ -112,6 +112,42 @@ async function copyContents(oldAsset, newAsset) {
     }
 }
 
+async function breadcrumbDisplayName() {
+    let folderId = "9fdf1bfc0a73710b6baef29394495fd5";
+    let folderAsset = await readAsset("folder", folderId);
+
+    let folders = folderAsset.folder.children;
+    for (let i = 15; i < 17; i++) {
+        let id = folders[i].id;
+        let yearFolder = await readAsset("folder", id);
+        let monthFolder = yearFolder.folder.children;
+        let sum = 0;
+        for (let j = 0; j < monthFolder.length; j++) {
+            console.log(monthFolder[j]);
+            let folderContent = await readAsset("folder", monthFolder[j].id);
+            console.log(folderContent)
+            if (folderContent.folder.children.length > 0) {
+                sum += folderContent.folder.children.length;
+                let exhibitions = folderContent.folder.children;
+                console.log(exhibitions)
+                for (let k = 0; k < exhibitions.length; k++) {
+                    let pageAsset = await readAsset("page", exhibitions[k].id);
+                    pageAsset.page.metadata.displayName = pageAsset.page.metadata.title;
+                    let result = await editAsset("page", exhibitions[k].id, pageAsset);
+
+                    if (result.success === true) {
+                        document.getElementById("output").innerHTML += `|--- ✅ ${monthFolder[j].path.path} --| <a target="_blank" href = "https://cascade.fiu.edu/entity/open.act?id=${exhibitions[k].id}&type=page">Click Me</a><br>`;
+                    } else {
+                        document.getElementById("output").innerHTML += `|--- ❌ ${monthFolder[j].path.path} --| <a target="_blank" href = "https://cascade.fiu.edu/entity/open.act?id=${exhibitions[k].id}&type=page">Click Me</a> <br>`;
+                    }
+                }
+                // document.getElementById("output").innerHTML += `|--- ${monthFolder[j].path.path} ---| ${folderContent.folder.children.length}---| <br>`;
+            }
+        }
+        document.getElementById("output").innerHTML += `|--- Total ${sum} ---| <br>`;
+        sum = 0;
+    }
+}
 // Reads an asset given an id and type and returns a JSON object of the asset
 async function readAsset(type, id) {
     var assetType = type;
