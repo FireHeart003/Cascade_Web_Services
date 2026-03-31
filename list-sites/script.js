@@ -7,7 +7,7 @@ const editEP =  cascadeEP + "/api/v1/edit";
 const readEP = cascadeEP + "/api/v1/read";
 const createEP = cascadeEP + "/api/v1/create";
 const APIKey = config.API_KEY;
-
+// Test
 async function getSites() {
     document.getElementById("output").textContent = "";
     try {
