@@ -40,4 +40,27 @@ This project is a simple frontend application using `index.html` and `script.js`
 
 Your browser will automatically open the app. Many of these index html files have a button element to execute the js script.
 
+## Core Script Functions
+
+Most scripts in this project are built around three core Cascade API functions:
+
+#### `readAsset(type, id)`
+
+Retrieves data for a specific asset in Cascade given the type of asset and its Cascade ID as parameters. This returns the `asset` field from the JSON response and is typically used to inspect an asset’s data, determine whether to modify it, or collect it for further processing (e.g., grouping or reporting).
+
+#### `editAsset(type, id, asset)`
+
+Edits an asset in Cascade given the type of asset, its Cascade ID, and the updated asset as parameters. This is typically used after reading the asset and modifying the content in the Javascript.
+
+The `asset` parameter represents the modified version of the asset, which is sent in the request body to update the existing asset in Cascade.
+
+
+#### `deleteAsset(id)`
+
+Removes an asset from Cascade given its Cascade ID. Use with caution, as this action is permanent.
+
+---
+
+These three functions form the foundation of most web service interactions with the Cascade API.
+By combining them, you can build automation scripts for viewing, updating, and managing content within Cascade.
 
