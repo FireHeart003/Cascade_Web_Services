@@ -19,7 +19,8 @@ async function changeTags() {
             arrTag = json.page.tags // Get array of tags
 
             for(let i = 0; i< arrTag.length; i++){
-                if(arrTag[i].name === 'Division of Academic and Student Affairs'){ // If tag = 'Insert_Tag_Name'
+                // Just renaming the tag, but you can also delete or add tags with similar logic
+                if(arrTag[i].name === 'Student Affairs'){ // If tag = 'Insert_Tag_Name'
                     console.log('deleting in progress');
                     arrTag[i].name = 'Division of Student Affairs'; //Edits a tag name
                     // arrTag.splice(i, 1); //Deletes a tag
