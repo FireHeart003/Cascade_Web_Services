@@ -7,14 +7,14 @@ const publishEP = cascadeEP + "/api/v1/publish";
 const APIKey = config.API_KEY;
 
 async function changeTags() {
-    tags = [
-        //Insert tag IDs
+    pages = [
+        //Insert page IDs
     ];
 
     cnt = 0;
-    for(let i = 0; i< tags.length; i++){
+    for(let i = 0; i< pages.length; i++){
         try {
-            var json = await readAsset("page", tags[i]); //Read Asset
+            var json = await readAsset("page", pages[i]); //Read Asset
 
             arrTag = json.page.tags // Get array of tags
 
@@ -25,7 +25,7 @@ async function changeTags() {
                     arrTag[i].name = 'Division of Student Affairs'; //Edits a tag name
                     // arrTag.splice(i, 1); //Deletes a tag
                     // arrTag.push({"name": ""}); // Adds new tag
-                    const response = await editAsset("page", tags[i], json);  //Edit asset
+                    const response = await editAsset("page", pages[i], json);  //Edit asset
                     console.log(response);
                     cnt += 1;
                     break;  
@@ -42,12 +42,12 @@ async function changeTags() {
     p.textContent = "Deleted: " + cnt;
     div.appendChild(p);
 
-    publishPosts(tags)
+    publishPosts(pages)
 }
 
-async function publishPosts(tags){
+async function publishPosts(pages){
     cnt = 0;
-    pageId = tags;
+    pageId = pages;
     console.log("Total Pages to be Published: " + pageId.length);
     for(let i = 0; i< pageId.length; i++){
         try{
