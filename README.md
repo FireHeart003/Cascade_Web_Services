@@ -144,6 +144,29 @@ There are 3 main functionalities for the script:
 - With automation, there may be a need for human input to correct certain fields(Ex: The CSV might have data that is hard to parse/differnet format)
 - Test with 5 rows of the CSV first by adjusting the lower and upper bounds of the for loop. This will help gauge whether the script is working as intended.
 
+## Cascade Directory API
+A browser-based tool that lets you visually navigate the Cascade CMS file structure and inspect any asset's JSON data directly from the page.
+
+### Running the Script
+1. Right click on index.html and click on "Open with Live Server"
+2. The index.html will open on localhost. Click on the "List Sites" buttons to run the script.
+3. Select the Cascade site in the dropdown menu.
+4. Browse folders and files in a tree-like structure and displays the full JSON object
+
+### How it Works
+1. Once "List Sites" button is clicked, `getSites()` fetches all available sites from Cascade and populates the dropdown
+2. When a site is selected, `getSiteData()` retrieves the site's root folder ID
+3. `getRootFolder()` reads the folder contents and renders each asset as a list item with an icon based on its asset type (Folder, page, block, template, XSLT format, etc.)
+4. Clicking a folder expands or collapses its contents
+5. Clicking any other asset will trigger `readAsset()` and displays the full JSON in an interactive JSONEditor on the page
+
+### Notes
+- Can be expanded to check for relationships
+- Works similarly to API requests on Insomnia without having to know the Cascade ID of each asset
+- Uses third party libraries such as: JSONEditor for displaying asset data and Foundations for UI
+
+
+
 
 
 
